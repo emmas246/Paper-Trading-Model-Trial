@@ -1,0 +1,28 @@
+# ---- Watchlist ----
+# Stocks the model is allowed to trade. Keep this small to start.
+watchlist:
+  - AAPL
+  - MSFT
+  - NVDA
+  - JNJ
+  - XOM
+
+# ---- Strategy: moving average crossover ----
+strategy:
+  short_window: 50
+  long_window: 200
+  # Only take signals confirmed for this many consecutive days (reduces whipsaw)
+  confirmation_days: 2
+
+# ---- Risk / safety limits (this is the part that matters most) ----
+risk:
+  max_position_pct: 0.20        # no single stock can be more than 20% of portfolio
+  max_total_invested_pct: 0.90  # always keep at least 10% cash buffer
+  stop_loss_pct: 0.08           # sell a position if it drops 8% from entry
+  max_daily_loss_pct: 0.03      # halt new trades for the day if portfolio drops 3% in one day
+  max_drawdown_pct: 0.15        # halt ALL trading (circuit breaker) if portfolio is 15% below its peak
+  max_trades_per_day: 5         # sanity cap on order volume
+
+# ---- Mode ----
+mode: paper   # "paper" = simulated money via Alpaca paper account. Change to "live" only when you're ready.
+require_manual_confirmation: true  # if true, trades are proposed + logged but NOT auto-submitted

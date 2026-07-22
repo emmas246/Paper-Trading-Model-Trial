@@ -1,0 +1,41 @@
+name: Daily Trade Check
+
+on:
+  schedule:
+    # 21:30 UTC = 5:30 PM ET (after US market close). Adjust for DST/your timezone.
+    - cron: "30 21 * * 1-5"
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab too
+
+jobs:
+  run-model:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed so the job can commit the updated log back to the repo
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run daily model
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          ALPACA_BASE_URL: ${{ secrets.ALPACA_BASE_URL }}
+        run: python main.py
+
+      - name: Commit updated trade log
+        run: |
+          git config user.name "quant-model-bot"
+          git config user.email "actions@github.com"
+          git add logs/trade_log.jsonl
+          git diff --quiet --cached || git commit -m "Log: run $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push

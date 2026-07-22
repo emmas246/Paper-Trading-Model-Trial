@@ -1,0 +1,9 @@
+yfinance==0.2.54
+requests==2.32.3
+pandas
+numpy
+pyyaml==6.0.2
+python-dotenv==1.0.1
+anthropic==0.40.0
+alpaca-py==0.33.1
+matplotlib==3.9.2
